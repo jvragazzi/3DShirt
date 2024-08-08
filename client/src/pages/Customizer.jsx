@@ -46,43 +46,44 @@ const Customizer = () => {
         return null;
     }
   }
-
   const handleSubmit = async (type) => {
-    if(!prompt) return alert("Please enter a prompt");
+    if (!prompt) return alert("Please enter a prompt");
 
     try {
-      setGeneratingImg(true);
+        setGeneratingImg(true);
 
-      const response = await fetch('https://threedshirt-kdye.onrender.com/api/v1/dalle', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          prompt,
-        })
-      })
+        const response = await fetch('https://threedshirt-kdye.onrender.com/api/v1/dalle', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ prompt })
+        });
 
-      const data = await response.json();
-
-      handleDecals(type, `data:image/png;base64,${data.photo}`)
+        const data = await response.json();
+        handleDecals(type, `data:image/png;base64,${data.photo}`);
     } catch (error) {
-      alert(error)
+        alert(error);
     } finally {
-      setGeneratingImg(false);
-      setActiveEditorTab("");
+        setGeneratingImg(false);
+        setActiveEditorTab("");
     }
+};
+
+const handleDecals = (type, result) => {
+  if (!result) {
+      alert("Invalid image data");
+      return;
   }
 
-  const handleDecals = (type, result) => {
-    const decalType = DecalTypes[type];
+  const decalType = DecalTypes[type];
+  state[decalType.stateProperty] = result;
 
-    state[decalType.stateProperty] = result;
-
-    if(!activeFilterTab[decalType.filterTab]) {
-      handleActiveFilterTab(decalType.filterTab)
-    }
+  if (!activeFilterTab[decalType.filterTab]) {
+      handleActiveFilterTab(decalType.filterTab);
   }
+};
+
 
   const handleActiveFilterTab = (tabName) => {
     switch (tabName) {
